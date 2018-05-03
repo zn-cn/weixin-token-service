@@ -1,4 +1,4 @@
-# 冰岩在线微信公用微服务
+# 微信微服务
 ## 基本信息
 + 开发语言: golang
 + 来源：[子豪的微信服务](https://github.com/ZhihaoJun/wxtoken) 的修订版本
