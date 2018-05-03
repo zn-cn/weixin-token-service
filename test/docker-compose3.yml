@@ -1,0 +1,106 @@
+version: "3"
+
+services:
+    web1:
+      image: web:1.0.1_test
+      volumes:
+        - /etc/localtime:/etc/localtime:ro
+        - ./log/web1:/app/log
+      ports:
+        - "6001:6000"
+      environment:
+        - TZ=Asia/Shanghai
+        - ENV=dev
+        - APP_PORT=6000
+        - APP_HOST=0.0.0.0
+        - APPID=<appid>
+        - APP_SECRET=<appsecret>
+        - REDIS_POER=6379
+        - REDIS_HOST=redis1
+      container_name: weixin_service_web
+      entrypoint: ["bin/main"]
+      depends_on:
+        - redis1
+    web2:
+      image: web:1.0.1_test
+      volumes:
+        - /etc/localtime:/etc/localtime:ro
+        - ./log/web2:/app/log
+      ports:
+        - "6002:6000"
+      environment:
+        - TZ=Asia/Shanghai
+        - ENV=dev
+        - APP_PORT=6000
+        - APP_HOST=0.0.0.0
+        - APPID=<appid>
+        - APP_SECRET=<appsecret>
+        - REDIS_POER=6379
+        - REDIS_HOST=redis2
+      container_name: weixin_service_web
+      entrypoint: ["bin/main"]
+      depends_on:
+        - redis2
+    web3:
+      image: web:1.0.1_test
+      volumes:
+        - /etc/localtime:/etc/localtime:ro
+        - ./log/web3:/app/log
+      ports:
+        - "6003:6000"
+      environment:
+        - TZ=Asia/Shanghai
+        - ENV=dev
+        - APP_PORT=6000
+        - APP_HOST=0.0.0.0
+        - APPID=<appid>
+        - APP_SECRET=<appsecret>
+        - REDIS_POER=6379
+        - REDIS_HOST=redis3
+      container_name: weixin_service_web
+      entrypoint: ["bin/main"]
+      depends_on:
+        - redis3 
+    daemon:
+      image: daemon:1.0.2
+      volumes:
+        - /etc/localtime:/etc/localtime:ro
+        - ./log/daemon:/app/log
+      environment:
+        - TZ=Asia/Shanghai
+        - ENV=dev
+        - APPID=wxdb6d54fc376bf014
+        - APP_SECRET=54c8841551e1b038c3e06f7baacecf9a
+      container_name: weixin_service_daemon
+      entrypoint: ["bin/main"]
+      depends_on:
+        - redis1
+        - redis2
+        - redis3
+    redis1:
+      image: redis:4.0.8
+      container_name: weixin_service_redis1
+      expose:
+        - "6379"
+      volumes:
+        - /etc/localtime:/etc/localtime:ro
+      environment:
+        - TZ=Asia/Shanghai
+    redis2:
+      image: redis:4.0.8
+      container_name: weixin_service_redis2
+      expose:
+        - "6379"
+      volumes:
+        - /etc/localtime:/etc/localtime:ro
+      environment:
+        - TZ=Asia/Shanghai
+    redis3:
+      image: redis:4.0.8
+      container_name: weixin_service_redis3
+      expose:
+        - "6379"
+      volumes:
+        - /etc/localtime:/etc/localtime:ro
+      environment:
+        - TZ=Asia/Shanghai

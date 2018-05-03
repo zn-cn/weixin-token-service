@@ -1,0 +1,63 @@
+version: "3"
+
+services:
+    web:
+      image: web:1.0.1_test
+      volumes:
+        - /etc/localtime:/etc/localtime:ro
+        - ./log/web:/app/log
+      ports:
+        - "7999:6000"
+      environment:
+        - TZ=Asia/Shanghai
+        - ENV=dev
+        - APP_PORT=6000
+        - APP_HOST=0.0.0.0
+        - APPID=<appid>
+        - APP_SECRET=<appsecret>
+        - REDIS_POER=6379
+        - REDIS_HOST=redis
+      container_name: weixin_service_web
+      entrypoint: ["bin/main"]
+      depends_on:
+        - redis
+    daemon:
+      image: daemon:1.0.2
+      volumes:
+        - /etc/localtime:/etc/localtime:ro
+        - ./log/daemon:/app/log
+      environment:
+        - TZ=Asia/Shanghai
+        - ENV=dev
+        - APPID=<appid>
+        - APP_SECRET=<appsecret>
+        - REDIS_POER=6379
+        - REDIS_HOST=redis
+      container_name: weixin_service_daemon_test
+      entrypoint: ["bin/main"]
+      depends_on:
+        - redis
+    redis:
+      environment:
+        - TZ=Asia/Shanghai    
+      volumes:
+        - /etc/localtime:/etc/localtime:ro
+        - ./redis/sentinel.conf:/data/sentinel.conf
+      image: redis:4.0.2
+      container_name: weixin_service_redis_master
+    redis-slave1:
+      environment:
+        - TZ=Asia/Shanghai        
+      volumes:
+        - ./redis/sentinel.conf:/data/sentinel.conf
+        - /etc/localtime:/etc/localtime:ro
+      image: redis:4.0.2
+      container_name: weixin_service_redis_slave1
+    redis-slave2:
+      environment:
+        - TZ=Asia/Shanghai        
+      volumes:
+        - /etc/localtime:/etc/localtime:ro
+        - ./redis/sentinel.conf:/data/sentinel.conf
+      image: redis:4.0.2
+      container_name: weixin_service_redis_slave2

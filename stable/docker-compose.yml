@@ -1,0 +1,16 @@
+version: "3"
+
+services:
+    web:
+      image: <your-image>
+      volumes:
+        - /etc/localtime:/etc/localtime:ro
+      ports:
+        - "6000:6000"
+      environment:
+        - TZ=Asia/Shanghai
+        - WXTOKEN_ADDR=:6000
+        - WXTOKEN_APPID=<appid>
+        - WXTOKEN_APPSECRET=<appsecret>
+      container_name: weixin_service_web
+      entrypoint: ["bin/main"]

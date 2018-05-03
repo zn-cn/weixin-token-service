@@ -1,0 +1,44 @@
+version: "3"
+
+services:
+    web:
+      image: <your-image>
+      volumes:
+        - /etc/localtime:/etc/localtime:ro
+        - ./log/web:/app/log
+      ports:
+        - "6000:6000"
+      environment:
+        - TZ=Asia/Shanghai
+        - ENV=dev
+        - APP_PORT=6000
+        - APP_HOST=0.0.0.0
+        - APPID=<appid>
+        - APP_SECRET=<appsecret>
+      container_name: weixin_service_web
+      entrypoint: ["bin/main"]
+      depends_on:
+        - redis
+    daemon:
+      image: <your-image>
+      volumes:
+        - /etc/localtime:/etc/localtime:ro
+        - ./log/daemon:/app/log
+      environment:
+        - TZ=Asia/Shanghai
+        - ENV=dev
+        - APPID=<appid>
+        - APP_SECRET=<appsecret>
+      container_name: weixin_service_daemon
+      entrypoint: ["bin/main"]
+      depends_on:
+        - redis
+    redis:
+      image: redis:4.0.2
+      container_name: weixin_service_redis
+      expose:
+        - "6379"
+      volumes:
+        - /etc/localtime:/etc/localtime:ro
+      environment:
+        - TZ=Asia/Shanghai

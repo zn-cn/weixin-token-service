@@ -1,0 +1,84 @@
+version: "3"
+
+services:
+    web:
+      image: <your-image>
+      volumes:
+        - /etc/localtime:/etc/localtime:ro
+        - ./log/web:/app/log
+      ports:
+        - "7999:6000"
+      environment:
+        - TZ=Asia/Shanghai
+        - ENV=dev
+        - APP_PORT=6000
+        - APP_HOST=0.0.0.0
+        - APPID=<appid>
+        - APP_SECRET=<appsecret>
+        - REDIS_POER=16379
+        - REDIS_HOST=redis-master
+      container_name: weixin_service_web
+      entrypoint: ["bin/main"]
+      depends_on:
+        - redis-master
+    daemon:
+      image: <your-image>
+      volumes:
+        - /etc/localtime:/etc/localtime:ro
+        - ./log/daemon:/app/log
+      environment:
+        - TZ=Asia/Shanghai
+        - ENV=dev
+        - APPID=<appid>
+        - APP_SECRET=<appsecret>
+        - REDIS_POER=16379
+        - REDIS_HOST=redis-master
+      container_name: weixin_service_daemon_test
+      entrypoint: ["bin/main"]
+      depends_on:
+        - redis-master
+    redis-master:
+      environment:
+        - redis_port=16379
+      volumes:
+        - /etc/localtime:/etc/localtime:ro
+      labels:
+        io.rancher.container.pull_image: always
+      tty: true
+      image: redis:1.0.0
+      stdin_open: true
+      container_name: weixin_service_redis_master
+    redis-slaves:
+      environment:
+        - master_port=16379
+        - redis_port=16380
+        - TZ=Asia/Shanghai        
+      volumes:
+        - /etc/localtime:/etc/localtime:ro
+      labels:
+        io.rancher.scheduler.affinity:container_label_soft_ne: name=slaves
+        io.rancher.container.pull_image: always
+        name: slaves
+      tty: true
+      command:
+        - slave
+      image: redis:1.0.0
+      stdin_open: true
+      container_name: weixin_service_redis_slave1
+    redis-sentinels:
+      environment:
+        - master_port=16379
+        - sentinel_port=16381
+        - TZ=Asia/Shanghai
+      volumes:
+        - /etc/localtime:/etc/localtime:ro
+      labels:
+        io.rancher.container.pull_image: always
+        name: sentinels
+        io.rancher.scheduler.affinity:container_label_ne: name=sentinels
+      tty: true
+      command:
+        - sentinel
+      image: redis:1.0.0
+      stdin_open: true
+      container_name: weixin_service_redis_sentinel1
