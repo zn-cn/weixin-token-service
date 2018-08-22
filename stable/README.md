@@ -1,7 +1,6 @@
 # 微信微服务
 ## 基本信息
 + 开发语言: golang
-+ 来源：[子豪的微信服务](https://github.com/ZhihaoJun/wxtoken) 的修订版本
 
 
 ## 限制请求來源IP
